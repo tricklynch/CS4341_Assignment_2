@@ -3,5 +3,6 @@ import sys
 def fitness():
     pass
 
-def main():
+# Probably change the default population later
+def main(puzzle, file, time, population=1):
     print("This was printed in puzzle1.py")

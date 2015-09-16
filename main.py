@@ -10,7 +10,7 @@ def main():
         "puzzle", type=int, help="Which puzzle it is solving (1, 2, or 3)"
     )
     parser.add_argument(
-        "filename", help="The name of the file it should read in that contains the puzzle information."
+        "file", help="The name of the file it should read in that contains the puzzle information."
     )
     parser.add_argument(
         "time", type=int, help="How many seconds it has to work on a solution"
@@ -35,7 +35,15 @@ def main():
         print("That is not a valid puzzle number.")
         sys.exit(1)
     # Run the main function within the puzzle
-    puzzle_package.main()
+    if not args.population:
+        puzzle_package.main(puzzle=args.puzzle, file=args.file, time=args.time)
+    else:
+        puzzle_package.main(
+            puzzle=args.puzzle,
+            file=args.file,
+            time=args.time,
+            population=args.population
+        )
 
 if __name__ == "__main__":
     main()
