@@ -19,6 +19,9 @@ class Population:
         self.individuals = []
         self._make_individuals()
 
+    def __str__(self):
+        return "{0}\t{1}\n".format(str(self.individuals),self.best().fitness())
+
     def _make_individuals(self):
         ''' Generates individuals to reside within the population '''
         individuals = []
@@ -39,11 +42,9 @@ class Population:
     def _gen_next_population(self):
         ''' Make the next population using the survivors of the previous '''
         self.individuals = []
-        self.individuals.extend(self.survivors[:self._spots_left()])
 
         while self._spots_left() > 0:
-            p1 = self.individuals[self._fitness_selection()]
-            p2 = self.individuals[self._fitness_selection()]
+            (p1, p2) = self._choose_parents()
             children = self.individual_class.crossover(p1, p2)
             self.individuals.extend(children[:self._spots_left()])
 
@@ -68,14 +69,31 @@ class Population:
         Selects a parent for crossover. Better fitness, better chance of selection.
         https://en.wikipedia.org/wiki/Fitness_proportionate_selection
         '''
-        total_fitness = sum(i.fitness() for i in self.individuals)
+        total_fitness = sum(i.fitness() for i in self.survivors)
         value = random.random() * total_fitness
 
-        for i, indiv in enumerate(self.individuals):
+        for i, indiv in enumerate(self.survivors):
             value -= indiv.fitness()
             if value <= 0:
                 return i
 
+    def _choose_parents(self):
+        '''
+        Choose two individuals to breed, and re-select if a clone is chosen
+        Trying to avoid https://en.wikipedia.org/wiki/Premature_convergence
+        '''
+        p1 = p2 = self.survivors[self._fitness_selection()]
+        reroll_count = 0
+        while p1 == p2 and reroll_count < self.size:
+            p2 = self.survivors[self._fitness_selection()]
+            reroll_count += 1
+        return (p1, p2)
+
     def best(self):
         ''' Get the best performer of all the individuals in this population '''
         return max(self.individuals)
+
+    def mean(self):
+        total_fitness = sum(i.fitness() for i in self.individuals)
+        mean = total_fitness / len(self.individuals)
+        return mean

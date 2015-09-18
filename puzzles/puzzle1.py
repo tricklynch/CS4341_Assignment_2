@@ -4,11 +4,13 @@ import sys
 
 
 def main(puzzle, file, time, population=1):
-    options = [1570, 1, 2, 303, 600, 5, 8, 16, 12, 22, 3,
-               7, 60, 113, 11, 36, 78, 103, 200, 400, 8, 64, 44]
+    trials = 100
+    options = [100,1,2,3,4,17,23,6,14,25,20]
     #options, individual_class, num_generations, population_size, cull_size
-    ga = Genetic_Algorithm(options, Individual_P1, 1000, 10, 5, 0.05)
+    ga = Genetic_Algorithm(options, Individual_P1, trials, 10, 5, 0.05)
     result = ga.start()
-    solution = str(result[1].used_pieces)
-    print "Best solution in generation {0} after 10 trials: {1}, with score {2}" \
-        .format(result[0], solution, result[1].fitness())
+    print "Best solution in generation {0} after {1} trials: {2}, with score {3}" \
+        .format(result[0], trials, result[1].used_pieces, result[1].fitness())
+
+    table = [i.fitness() for i in ga.best_individuals]
+    #print table
