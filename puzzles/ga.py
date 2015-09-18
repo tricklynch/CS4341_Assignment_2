@@ -4,14 +4,15 @@ from collections import OrderedDict
 
 class Genetic_Algorithm:
 
-    def __init__(self, options, individual_class, num_generations, population_size, cull_size):
+    def __init__(self, options, individual_class, num_generations,
+                 population_size, cull_size, mutation_chance):
         self.best_individuals = OrderedDict()
         self.num_generations = num_generations
         self.population_size = population_size
         self.individual_class = individual_class
         self.cull_size = cull_size
         self.options = options
-        self.mutation_chance = 0.05
+        self.mutation_chance = mutation_chance
 
     # Start the genetic algorithm.
     def start(self):
@@ -28,6 +29,7 @@ class Genetic_Algorithm:
 
             # store the best individual from this generation
             self.best_individuals[count] = new_population.best()
+            survivors = new_population.cull(self.cull_size)
 
         overall_best = max(self.best_individuals.values())
         best_generation = self.best_individuals.values().index(overall_best)

@@ -88,15 +88,18 @@ class Individual_P2(object):
         See http://stackoverflow.com/questions/11782881/how-to-implement-ordered-crossover
         '''
         size = len(a.options)
-        start = random.randint(0, 2) * (size / 3)
-        end = start + (size / 3)
 
-        b_swap_bucket = b.used_pieces[start: end]
-        a_swap_bucket = a.used_pieces[start: end]
+        #Select a random range to cross from
+        n1, n2 = random.randint(0, size), random.randint(0, size)
+        start = min(n1, n2)
+        end = max(n1, n2)
+
+        b_swap = b.used_pieces[start: end]
+        a_swap = a.used_pieces[start: end]
 
         cross_a, cross_b = Individual_P2([]), Individual_P2([])
-        cross_a.used_pieces.extend(a_swap_bucket)
-        cross_b.used_pieces.extend(b_swap_bucket)
+        cross_a.used_pieces.extend(a_swap)
+        cross_b.used_pieces.extend(b_swap)
 
         index, gene_in_a, gene_in_b = 0, 0, 0
         for x in range(size):
@@ -134,4 +137,6 @@ class Individual_P2(object):
         mult_bucket_score = functools.reduce(lambda x, y: x * y, mult_bucket)
         add_bucket_score = sum(add_bucket)
         score = (mult_bucket_score + add_bucket_score) / 2
-        return score
+
+        #If the fitness is negative, give a score of 0
+        return max(0, score)

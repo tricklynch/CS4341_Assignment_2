@@ -13,31 +13,48 @@ class Population:
         self.survivors = survivors
         # options is the set of pieces that can be used in the puzzle
         self.options = options
-        # individuals is a list of all members of the population
-        self.individuals = self._make_individuals()
         # How likely a mutation is to occur
         self.mutation_chance = mutation_chance
+        # individuals is a list of all members of the population
+        self.individuals = []
+        self._make_individuals()
 
     def _make_individuals(self):
         ''' Generates individuals to reside within the population '''
         individuals = []
         if self.survivors == None:
             # Make totally new individuals
-            for x in range(self.size):
-                new_individual = self.individual_class(self.options)
-                individuals.append(new_individual)
+            self._gen_start_population()
+        else:
+            self._gen_next_population()
+            self._mutate_population()
 
-        # Breed new population from previous generation
-        while len(individuals) < self.size:
-            individuals.extend(self.survivors)
-            parents = random.sample(self.survivors, 2)
-            children = self.individual_class.crossover(*parents)
-            individuals.extend(children)
+    def _gen_start_population(self):
+        ''' Make a brand new population of individuals '''
+        self.individuals = []
+        for x in range(self.size):
+            new_individual = self.individual_class(self.options)
+            self.individuals.append(new_individual)
 
-        # Mutate
-        for individual in individuals:
-            individual.mutate(0.05)
-        return individuals
+    def _gen_next_population(self):
+        ''' Make the next population using the survivors of the previous '''
+        self.individuals = []
+        self.individuals.extend(self.survivors[:self._spots_left()])
+
+        while self._spots_left() > 0:
+            p1 = self.individuals[self._fitness_selection()]
+            p2 = self.individuals[self._fitness_selection()]
+            children = self.individual_class.crossover(p1, p2)
+            self.individuals.extend(children[:self._spots_left()])
+
+    def _spots_left(self):
+        ''' Number of open spots that can be filled by new individuals in the population '''
+        return self.size - len(self.individuals)
+
+    def _mutate_population(self):
+        ''' Mutate population in place '''
+        for i in range(len(self.individuals)):
+            self.individuals[i].mutate(self.mutation_chance)
 
     def cull(self, cull_size):
         ''' Kills off the worst scoring members of the population. '''
@@ -46,5 +63,19 @@ class Population:
             self.individuals.remove(smallest)
         return self.individuals
 
+    def _fitness_selection(self):
+        '''
+        Selects a parent for crossover. Better fitness, better chance of selection.
+        https://en.wikipedia.org/wiki/Fitness_proportionate_selection
+        '''
+        total_fitness = sum(i.fitness() for i in self.individuals)
+        value = random.random() * total_fitness
+
+        for i, indiv in enumerate(self.individuals):
+            value -= indiv.fitness()
+            if value <= 0:
+                return i
+
     def best(self):
+        ''' Get the best performer of all the individuals in this population '''
         return max(self.individuals)
