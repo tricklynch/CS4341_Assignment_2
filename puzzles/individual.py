@@ -74,7 +74,6 @@ class Individual_P2(object):
         self.used_pieces = options
         random.shuffle(self.used_pieces)
 
-
     def __lt__(self, other):
         ''' Used to sort individuals on score '''
         return self.fitness() < other.fitness()

@@ -1,5 +1,6 @@
 import random
 
+
 class Population:
 
     def __init__(self, options, mutation_chance, size, individual_class, survivors):
@@ -14,29 +15,29 @@ class Population:
         self.options = options
         # individuals is a list of all members of the population
         self.individuals = self._make_individuals()
-        #How likely a mutation is to occur
+        # How likely a mutation is to occur
         self.mutation_chance = mutation_chance
 
     def _make_individuals(self):
         ''' Generates individuals to reside within the population '''
         individuals = []
         if self.survivors == None:
-            #Make totally new individuals
+            # Make totally new individuals
             for x in range(self.size):
                 new_individual = self.individual_class(self.options)
                 individuals.append(new_individual)
 
-        #Breed new population
+        # Breed new population from previous generation
         while len(individuals) < self.size:
-             parents = random.sample(self.survivors, 2)
-             children = self.individual_class.crossover(*parents)
-             individuals.extend(children)
+            individuals.extend(self.survivors)
+            parents = random.sample(self.survivors, 2)
+            children = self.individual_class.crossover(*parents)
+            individuals.extend(children)
 
-        #Mutate
+        # Mutate
         for individual in individuals:
             individual.mutate(0.05)
         return individuals
-
 
     def cull(self, cull_size):
         ''' Kills off the worst scoring members of the population. '''
