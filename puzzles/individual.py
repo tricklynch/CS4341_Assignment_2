@@ -139,3 +139,59 @@ class Individual_P2(Individual_Base):
 
         # If the fitness is negative, give a score of 0
         return max(0, score)
+
+
+class Individual_P3(Individual_Base):
+    '''A class used to represent an individual member of the population for puzzle 3'''
+
+    def __init__(self, options):
+        # options is an array of numbers that the individual has
+        # access to
+        self.options = options
+        # used_pieces is an array of options that are being used
+        self.used_pieces = self._randomize()
+
+    def _randomize(self):
+        ''' Gives a random permutation of pieces to use '''
+        random.shuffle(self.options)
+        result = []
+
+        for piece in self.options:
+            used = random.choice([True, False])
+            piece.used = used
+            result.append(piece)
+        return result
+
+    def fitness(self):
+        ''' Returns the overall fitness of the individual '''
+
+        tower = [piece for piece in self.used_pieces if piece.used == True]
+        if not tower:
+            return 0
+
+        first = tower[0]
+        last = tower[-1]
+
+        if first.kind != "Door" or last.kind != "Lookout":
+            return 0
+
+        score = 0
+        previous = None
+        total_cost = 0
+        height = len(tower)
+        for index, piece in enumerate(tower):
+            pieces_above = height - 1 - index
+            if piece.strength < pieces_above:
+                return 0
+            if previous != None:
+                if piece.width > previous.width:
+                    return 0
+            if piece is not first and piece.kind == "Door":
+                return 0
+            if piece is not last and piece.kind == "Lookout":
+                return 0
+            previous = piece
+            total_cost += piece.cost
+
+        score = 10 + (height**2) - total_cost
+        return score

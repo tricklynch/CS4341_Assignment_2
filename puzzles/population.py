@@ -15,6 +15,8 @@ class Population:
         self.options = options
         # How likely a mutation is to occur
         self.mutation_chance = mutation_chance
+        #How many elites to keep from previous rounds
+        self.elites = 3
         # individuals is a list of all members of the population
         self.individuals = []
         self._make_individuals()

@@ -6,10 +6,10 @@ import sys
 
 def main(puzzle, file, time, population=1):
     trials = 100
-    options = [-70, -2, -3, -4, -5, -6, 1, 2, 3, 4, 5, 6, 7, 17, 23]
 
+    options = Genetic_Algorithm.parse_file(file, 2)
     #options, individual_class, num_generations, population_size, cull_size
-    ga = Genetic_Algorithm(options, Individual_P2, trials, 3, 2, 0.05)
+    ga = Genetic_Algorithm(options, Individual_P2, trials, population, 2, 0.05)
     result = ga.start()
     solution = str(result[1].used_pieces)
     print "Best solution in generation {0} after {1} trials: {2}, with score {3}" \
