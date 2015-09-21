@@ -1,5 +1,5 @@
 import random
-
+import copy
 
 class Population:
 
@@ -44,6 +44,11 @@ class Population:
     def _gen_next_population(self):
         ''' Make the next population using the survivors of the previous '''
         self.individuals = []
+
+        #Add elites to the population
+        self.survivors.sort(reverse=True)
+        elites = copy.deepcopy(self.survivors[:self.elites])
+        self.individuals.extend(elites)
 
         while self._spots_left() > 0:
             (p1, p2) = self._choose_parents()

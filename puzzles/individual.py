@@ -3,13 +3,14 @@ import copy
 from itertools import islice
 from pieces import Number_Piece
 import functools
+import operator
+
 
 @functools.total_ordering
 class Individual_Base:
 
-    def __init__(self, options, used_pieces=[]):
+    def __init__(self, options):
         self.options = options
-        self.used_pieces = used_pieces
 
     def __lt__(self, other):
         ''' Used to sort individuals on score '''
@@ -35,7 +36,7 @@ class Individual_Base:
         size = len(a.used_pieces)
 
         # Select a random range to cross from
-        n1, n2 = random.randint(0, size), random.randint(0, size)
+        n1, n2 = random.randint(0, size - 1), random.randint(0, size - 1)
         start = min(n1, n2)
         end = max(n1, n2)
 
@@ -48,9 +49,9 @@ class Individual_Base:
         cross_a.used_pieces.extend(a_swap)
         cross_b.used_pieces.extend(b_swap)
 
-        index, gene_in_a, gene_in_b = 0, 0, 0
+        index = 0
         for x in range(size):
-            index = (end + x) % (size)
+            index = (end + x) % size
             gene_in_a = a.used_pieces[index]
             gene_in_b = b.used_pieces[index]
 
@@ -64,7 +65,6 @@ class Individual_Base:
         cross_b._rotate(start)
         return [cross_a, cross_b]
 
-
     def mutate(self, chance):
         ''' Goes through each gene in the individual and mutates it with a given probability '''
         for index, val in enumerate(self.used_pieces):
@@ -74,6 +74,7 @@ class Individual_Base:
                 self.used_pieces[index] = self.used_pieces[other]
                 self.used_pieces[other] = temp
         return self
+
 
 class Individual_P1(Individual_Base):
     '''A class used to represent an individual member of the population for puzzle 1'''
@@ -93,6 +94,7 @@ class Individual_P1(Individual_Base):
             used = random.choice([True, False])
             new_piece = Number_Piece(num, used)
             result.append(new_piece)
+        random.shuffle(result)
         return result
 
     def mutate(self, chance):
@@ -123,17 +125,27 @@ class Individual_P2(Individual_Base):
         # access to
         self.options = options
         # used_pieces is an array of options that are being used
-        self.used_pieces = options
-        random.shuffle(self.used_pieces)
+        self.used_pieces = self._randomize()
+
+    def _randomize(self):
+        ''' Returns a random subset of the options. Goal is never included in the subset '''
+        result = []
+
+        for num in self.options:
+            used = random.choice([True, False])
+            new_piece = Number_Piece(num, used)
+            result.append(new_piece)
+        random.shuffle(result)
+        return result
 
     def fitness(self):
         ''' Returns the overall fitness of the individual '''
         bucket_size = len(self.used_pieces) / 3
-        mult_bucket = self.used_pieces[0:bucket_size]
-        add_bucket = self.used_pieces[bucket_size: 2 * bucket_size]
+        mult_bucket = [x.value for x in self.used_pieces[0:bucket_size]]
+        add_bucket = [x.value for x in self.used_pieces[bucket_size: 2 * bucket_size]]
         nop_bucket = self.used_pieces[2 * bucket_size:]
 
-        mult_bucket_score = functools.reduce(lambda x, y: x * y, mult_bucket)
+        mult_bucket_score = functools.reduce(operator.mul, mult_bucket, 1)
         add_bucket_score = sum(add_bucket)
         score = (mult_bucket_score + add_bucket_score) / 2
 
@@ -150,6 +162,9 @@ class Individual_P3(Individual_Base):
         self.options = options
         # used_pieces is an array of options that are being used
         self.used_pieces = self._randomize()
+
+    def __repr__(self):
+        return str([piece for piece in self.used_pieces if piece.used == True])
 
     def _randomize(self):
         ''' Gives a random permutation of pieces to use '''
@@ -193,5 +208,5 @@ class Individual_P3(Individual_Base):
             previous = piece
             total_cost += piece.cost
 
-        score = 10 + (height**2) - total_cost
+        score = 10 + (height ** 2) - total_cost
         return score
