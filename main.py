@@ -18,6 +18,12 @@ def main():
     parser.add_argument(
         "-p", "--population", type=int, help="The size of the population"
     )
+    parser.add_argument(
+        "-e", "--elitism", type=int, help="The number of elite clones between generations"
+    )
+    parser.add_argument(
+        "-c", "--culling", type=int, help="The number of members to cull between generations"
+    )
     args = parser.parse_args()
 
     # Seed the rng
@@ -35,15 +41,14 @@ def main():
         print("That is not a valid puzzle number.")
         sys.exit(1)
     # Run the main function within the puzzle
-    if not args.population:
-        puzzle_package.main(puzzle=args.puzzle, file=args.file, time=args.time)
-    else:
-        puzzle_package.main(
-            puzzle=args.puzzle,
-            file=args.file,
-            time=args.time,
-            population=args.population
-        )
+    puzzle_package.main(
+        puzzle=args.puzzle,
+        file=args.file,
+        time=args.time,
+        population=args.population,
+        elitism=args.elitism,
+        culling=args.culling
+    )
 
 if __name__ == "__main__":
     main()
