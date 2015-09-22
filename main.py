@@ -38,6 +38,11 @@ def main():
     )
     args = parser.parse_args()
 
+    if args.population <= (args.elitism + args.culling):
+        print "The population is less than the sum of the number of elite clones and the number culled."
+        print "Don't do that"
+        sys.exit(1)
+
     # Seed the rng
     seed = os.urandom(16)
     random.seed(seed)
