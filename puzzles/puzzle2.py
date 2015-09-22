@@ -1,10 +1,9 @@
 from ga import Genetic_Algorithm
 from individual import Individual_P2
 import sys
-# Probably change the default population later
+import time
 
-
-def main(puzzle, file, time, population, elitism, culling, trials, rate):
+def main(puzzle, file, max_time, population, elitism, culling, trials, rate):
     if not population:
         population = 15
     if not elitism:
@@ -20,8 +19,8 @@ def main(puzzle, file, time, population, elitism, culling, trials, rate):
     if not rate:
         rate = 0.05
 
+    start_time = time.time()
     options = Genetic_Algorithm.parse_file(file, 2)
-    
     # options, individual_class, num_generations,
     # population_size, elitism, cull_size, mutation_chance
     ga = Genetic_Algorithm(
@@ -31,7 +30,9 @@ def main(puzzle, file, time, population, elitism, culling, trials, rate):
         population, 
         elitism, 
         culling, 
-        rate
+        rate,
+        start_time,
+        max_time
     )
     result = ga.start()
     solution = str(result[1].used_pieces)

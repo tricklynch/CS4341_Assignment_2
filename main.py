@@ -50,7 +50,7 @@ def main():
     puzzle_package.main(
         puzzle=args.puzzle,
         file=args.file,
-        time=args.time,
+        max_time=args.time,
         population=args.population,
         elitism=args.elitism,
         culling=args.culling,

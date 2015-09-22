@@ -8,7 +8,8 @@ import re
 class Genetic_Algorithm:
 
     def __init__(self, options, individual_class, num_generations,
-                 population_size, cull_size, elitism_size, mutation_chance):
+                 population_size, cull_size, elitism_size, mutation_chance,
+                 start_time, max_time):
         self.best_individuals = []
         self.num_generations = num_generations
         self.population_size = population_size
@@ -18,6 +19,8 @@ class Genetic_Algorithm:
         self.options = options
         self.mutation_chance = mutation_chance
         self.survivors = None
+        self.start_time = start_time
+        self.max_time = max_time
 
     def start(self):
         ''' Start the genetic algorithm.'''

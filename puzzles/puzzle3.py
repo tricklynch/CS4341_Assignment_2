@@ -2,8 +2,9 @@ import sys
 from individual import Individual_P3
 from ga import Genetic_Algorithm
 from pieces import Tower_Piece
+import time
 
-def main(puzzle, file, time, population, elitism, culling, trials):
+def main(puzzle, file, max_time, population, elitism, culling, trials, rate):
     if not population:
         population = 15
     if not elitism:
@@ -19,6 +20,7 @@ def main(puzzle, file, time, population, elitism, culling, trials):
     if not rate:
         rate = 0.05
 
+    start_time = time.time()
     options = Genetic_Algorithm.parse_file(file, 3)
     # options, individual_class, num_generations,
     # population_size, elitism, cull_size, mutation_chance
@@ -29,7 +31,9 @@ def main(puzzle, file, time, population, elitism, culling, trials):
         population, 
         elitism, 
         culling, 
-        rate
+        rate,
+        start_time,
+        max_time
     )
     result = ga.start()
     solution = str(result[1].used_pieces)
