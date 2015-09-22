@@ -24,6 +24,9 @@ def main():
     parser.add_argument(
         "-c", "--culling", type=int, help="The number of members to cull between generations"
     )
+    parser.add_argument(
+        "-t", "--trials", type=int, help="The number of trials/generations to run"
+    )
     args = parser.parse_args()
 
     # Seed the rng
@@ -47,7 +50,8 @@ def main():
         time=args.time,
         population=args.population,
         elitism=args.elitism,
-        culling=args.culling
+        culling=args.culling,
+        trials=args.trials
     )
 
 if __name__ == "__main__":
