@@ -10,25 +10,31 @@ def main():
         "puzzle", type=int, help="Which puzzle it is solving (1, 2, or 3)"
     )
     parser.add_argument(
-        "file", help="The name of the file it should read in that contains the puzzle information."
+        "file", 
+        help="The name of the file that contains the puzzle information."
     )
     parser.add_argument(
         "time", type=int, help="How many seconds it has to work on a solution"
     )
     parser.add_argument(
-        "-p", "--population", type=int, help="The size of the population"
+        "-p", "--population", type=int, default=15,
+        help="The size of the population"
     )
     parser.add_argument(
-        "-e", "--elitism", type=int, help="The number of elite clones between generations"
+        "-e", "--elitism", type=int, default=3,
+        help="The number of elite clones between generations"
     )
     parser.add_argument(
-        "-c", "--culling", type=int, help="The number of members to cull between generations"
+        "-c", "--culling", type=int, default=2,
+        help="The number of members to cull between generations"
     )
     parser.add_argument(
-        "-t", "--trials", type=int, help="The number of trials/generations to run"
+        "-t", "--trials", type=int, default=100,
+        help="The number of trials/generations to run"
     )
     parser.add_argument(
-        "-r", "--rate", type=float, help="The mutation rate/chance"
+        "-r", "--rate", type=float, default=0.05,
+        help="The mutation rate/chance"
     )
     args = parser.parse_args()
 

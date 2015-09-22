@@ -3,7 +3,7 @@ from collections import OrderedDict
 from pieces import Tower_Piece
 import copy
 import re
-
+import time
 
 class Genetic_Algorithm:
 
@@ -28,11 +28,19 @@ class Genetic_Algorithm:
         # Run for the number of generations
         for count in range(self.num_generations):
             new_population = Population(
-                self.options, self.mutation_chance, self.population_size, self.individual_class, self.survivors)
+                self.options,
+                self.mutation_chance,
+                self.population_size,
+                self.individual_class,
+                self.survivors
+            )
 
             # store the best individual from this generation
             self.best_individuals.append(copy.deepcopy(new_population.best()))
             self.survivors = new_population.cull(self.cull_size)
+
+            if self.max_time + self.start_time > time.time():
+                break
 
         overall_best = max(self.best_individuals)
         index = self.best_individuals.index(overall_best)
