@@ -27,6 +27,9 @@ def main():
     parser.add_argument(
         "-t", "--trials", type=int, help="The number of trials/generations to run"
     )
+    parser.add_argument(
+        "-r", "--rate", type=float, help="The mutation rate/chance"
+    )
     args = parser.parse_args()
 
     # Seed the rng
@@ -51,7 +54,8 @@ def main():
         population=args.population,
         elitism=args.elitism,
         culling=args.culling,
-        trials=args.trials
+        trials=args.trials,
+        rate=args.rate
     )
 
 if __name__ == "__main__":

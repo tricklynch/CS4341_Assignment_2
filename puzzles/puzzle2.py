@@ -4,7 +4,7 @@ import sys
 # Probably change the default population later
 
 
-def main(puzzle, file, time, population, elitism, culling, trials):
+def main(puzzle, file, time, population, elitism, culling, trials, rate):
     if not population:
         population = 15
     if not elitism:
@@ -17,6 +17,8 @@ def main(puzzle, file, time, population, elitism, culling, trials):
         sys.exit(1)
     if not trials:
         trials = 100
+    if not rate:
+        rate = 0.05
 
     options = Genetic_Algorithm.parse_file(file, 2)
     
@@ -29,7 +31,7 @@ def main(puzzle, file, time, population, elitism, culling, trials):
         population, 
         elitism, 
         culling, 
-        0.05
+        rate
     )
     result = ga.start()
     solution = str(result[1].used_pieces)
