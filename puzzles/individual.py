@@ -9,9 +9,6 @@ import operator
 @functools.total_ordering
 class Individual_Base:
 
-    def __init__(self, options):
-        self.options = options
-
     def __lt__(self, other):
         ''' Used to sort individuals on score '''
         return self.fitness() < other.fitness()
@@ -22,10 +19,24 @@ class Individual_Base:
 
     def _rotate(self, amt):
         ''' Used in crossover, rotates the list so that crossed genes align properly '''
-        self.used_pieces = (self.used_pieces[amt:] + self.used_pieces[:amt])
+        self.used_pieces = (self.used_pieces[-amt:] + self.used_pieces[:-amt])
 
     def __repr__(self):
         return str(self.used_pieces)
+
+    def cross_set(self, swap_pieces):
+        ''' Returns the set of pieces that a child needs from its other parent during crossover '''
+        return_set = []
+        for piece in self.used_pieces:
+            found = False
+            for swap in swap_pieces:
+                if swap.equals(piece):
+                    swap_pieces.remove(swap)
+                    found = True
+                    break
+            if not found:
+                return_set.append(piece)
+        return return_set
 
     @classmethod
     def crossover(cls, a, b):
@@ -42,24 +53,17 @@ class Individual_Base:
 
         b_swap = b.used_pieces[start: end]
         a_swap = a.used_pieces[start: end]
+
         cross_a, cross_b = cls(a.options), cls(b.options)
         cross_a.used_pieces = []
         cross_b.used_pieces = []
-
         cross_a.used_pieces.extend(a_swap)
         cross_b.used_pieces.extend(b_swap)
 
-        index = 0
-        for x in range(size):
-            index = (end + x) % size
-            gene_in_a = a.used_pieces[index]
-            gene_in_b = b.used_pieces[index]
-
-            if gene_in_b not in cross_a.used_pieces:
-                cross_a.used_pieces.append(gene_in_b)
-
-            if gene_in_a not in cross_b.used_pieces:
-                cross_b.used_pieces.append(gene_in_a)
+        a_other = b.cross_set(a_swap)
+        b_other = a.cross_set(b_swap)
+        cross_a.used_pieces.extend(a_other)
+        cross_b.used_pieces.extend(b_other)
 
         cross_a._rotate(start)
         cross_b._rotate(start)
@@ -142,7 +146,8 @@ class Individual_P2(Individual_Base):
         ''' Returns the overall fitness of the individual '''
         bucket_size = len(self.used_pieces) / 3
         mult_bucket = [x.value for x in self.used_pieces[0:bucket_size]]
-        add_bucket = [x.value for x in self.used_pieces[bucket_size: 2 * bucket_size]]
+        add_bucket = [x.value for x in self.used_pieces[
+            bucket_size: 2 * bucket_size]]
         nop_bucket = self.used_pieces[2 * bucket_size:]
 
         mult_bucket_score = functools.reduce(operator.mul, mult_bucket, 1)

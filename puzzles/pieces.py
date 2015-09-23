@@ -8,17 +8,20 @@ class Tower_Piece:
         self.used = False
 
     def __repr__(self):
-        rep = "P:{0} W:{1} S:{2} C:{3}".format(self.kind, self.width, self.strength, self.cost)
+        rep = "P:{0} W:{1} S:{2} C:{3}".format(
+            self.kind, self.width, self.strength, self.cost)
         if not self.used:
             return "({0})".format(rep)
         else:
             return rep
 
-    def __eq__(self, other):
+    def equals(self, other):
+        ''' Checks if one piece is equal to another. Note that we do not want to override __eq__ here.'''
         return self.kind == other.kind \
             and self.width == other.width \
             and self.cost == other.cost \
-            and self.strength == other.width \
+            and self.strength == other.strength \
+
 
 
 class Number_Piece:
@@ -37,6 +40,6 @@ class Number_Piece:
         ''' Used to sort pieces on value '''
         return self.value < other.value
 
-    def __eq__(self, other):
-        ''' Used to determine if one individual == another '''
+    def equals(self, other):
+        ''' Checks if one piece is equal to another. Note that we do not want to override __eq__ here.'''
         return self.value == other.value
