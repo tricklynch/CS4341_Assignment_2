@@ -25,6 +25,7 @@ class Genetic_Algorithm:
     def start(self):
         ''' Start the genetic algorithm.'''
 
+        generations_run = self.num_generations
         # Run for the number of generations
         for count in range(self.num_generations):
             new_population = Population(
@@ -39,12 +40,13 @@ class Genetic_Algorithm:
             self.best_individuals.append(copy.deepcopy(new_population.best()))
             self.survivors = new_population.cull(self.cull_size)
 
-            if self.max_time + self.start_time > time.time():
+            if self.max_time + self.start_time < time.time():
+                generations_run = count
                 break
 
         overall_best = max(self.best_individuals)
         index = self.best_individuals.index(overall_best)
-        return (index, overall_best)
+        return (index, overall_best, generations_run)
 
     @staticmethod
     def parse_file(file, puzzle):
