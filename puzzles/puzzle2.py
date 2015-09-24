@@ -21,7 +21,7 @@ def main(puzzle, file, max_time, population, elitism, culling, trials, rate):
     solution = str(result[1].used_pieces)
     time_run = time.time() - start_time
     print "Best solution in generation {0} after {1} trials and {2} seconds: {3}, with score {4}" \
-        .format(result[0], trials, time_run, solution, result[1].fitness())
+        .format(result[0], result[2], time_run, solution, result[1].fitness())
 
     table = [i.fitness() for i in ga.best_individuals]
     print table
